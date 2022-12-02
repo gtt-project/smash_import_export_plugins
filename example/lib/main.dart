@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:smash_import_export_plugins/generated/l10n.dart';
 import 'package:smash_import_export_plugins/smash_import_export_plugins.dart';
+import 'package:smashlibs/smashlibs.dart';
 import 'mock_project_db.dart';
 
 void main() {
@@ -46,6 +47,15 @@ class _MyHomePageState extends State<MyHomePage> {
   var db = MockProjectDb();
 
   @override
+  void initState() {
+    super.initState();
+    Future(() async {
+      await GpPreferences().initialize();
+      setState(() {});
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -58,27 +68,25 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             ElevatedButton(
-              onPressed: () async {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ImportWidget(
-                          projectDb: db,
-                        )));
-              },
-              child: Text('Import')
-            ),
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ImportWidget(
+                                projectDb: db,
+                              )));
+                },
+                child: Text('Import')),
             ElevatedButton(
                 onPressed: () async {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ExportWidget(
-                            projectDb: db,
-                          )));
+                                projectDb: db,
+                              )));
                 },
-                child: Text('Export')
-            ),
+                child: Text('Export')),
           ],
         ),
       ),

@@ -4,6 +4,83 @@ import 'package:flutter/material.dart';
 import 'package:smashlibs/smashlibs.dart';
 
 class MockProjectDb implements ProjectDb {
+  List<Note> notes = [
+    // SimpleNote (Text)
+    Note()
+      ..id = 1
+      ..lon = 11.33140
+      ..lat = 46.47781
+      ..altim = -1.0
+      ..timeStamp = DateTime.now().millisecondsSinceEpoch
+      ..description = "POI"
+      ..text = "note"
+      ..form = null
+      ..style = null
+      ..isDirty = 1,
+    // FormNote (Image)
+    Note()
+      ..id = 2
+      ..lon = 11.33140
+      ..lat = 46.47781
+      ..altim = -1.0
+      ..timeStamp = DateTime.now().millisecondsSinceEpoch
+      ..description = "POI"
+      ..text = "image note"
+      ..form =
+          '{"sectionname":"image note","sectiondescription":"note with image","sectionicon":"image","forms":[{"formname":"image note","formitems":[{"key":"description","islabel":"true","value":"test","icon":"infoCircle","type":"string","mandatory":"no"},{"key":"images","value":"2","type":"pictures"}]},{"formname":"image from library","formitems":[{"key":"description","islabel":"true","value":"","icon":"infoCircle","type":"string","mandatory":"no"},{"key":"imagesfromlib","value":"","type":"imagelib"}]}]}'
+      ..style = null
+      ..isDirty = 1,
+    // FormNote (Text)
+    Note()
+      ..id = 3
+      ..lon = 11.33140
+      ..lat = 46.47781
+      ..altim = -1.0
+      ..timeStamp = DateTime.now().millisecondsSinceEpoch
+      ..description = "POI"
+      ..text = "text note"
+      ..form =
+          '{"sectionname":"text note","sectiondescription":"a simple text note","sectionicon":"fileAlt","forms":[{"formname":"text note","formitems":[{"key":"title","value":"title","icon":"font","islabel":"true","type":"string","mandatory":"no"},{"key":"description","value":"test","icon":"infoCircle","type":"string","mandatory":"no"}]}]}'
+      ..style = null
+      ..isDirty = 1,
+  ];
+
+  List<DbImage> images = [
+    // SimpleNote (Image)
+    DbImage()
+      ..id = 1
+      ..lon = 11.33140
+      ..lat = 46.47781
+      ..altim = -1.0
+      ..azim = -1.0
+      ..imageDataId = 1
+      ..timeStamp = DateTime.now().millisecondsSinceEpoch
+      ..text = "IMG_20221201_000000"
+      ..noteId = null
+      ..isDirty = 1,
+    // FormNote (Image)
+    DbImage()
+      ..id = 2
+      ..lon = 11.33140
+      ..lat = 46.47781
+      ..altim = -1.0
+      ..azim = -1.0
+      ..imageDataId = 2
+      ..timeStamp = DateTime.now().millisecondsSinceEpoch
+      ..text = "IMG_20221202_000000"
+      ..noteId = 2
+      ..isDirty = 1,
+  ];
+
+  List<Log> logs = [
+    Log()
+      ..id = 1
+      ..startTime = DateTime.now().millisecondsSinceEpoch - 1000
+      ..endTime = DateTime.now().millisecondsSinceEpoch
+      ..lengthm = 0
+      ..isDirty = 1
+      ..text = "log_20221202_000000"
+  ];
 
   @override
   String getPath() {
@@ -12,80 +89,58 @@ class MockProjectDb implements ProjectDb {
 
   @override
   int getNotesCount(bool onlyDirty) {
-    return 1;
+    return notes
+        .where((Note n) => (!onlyDirty || (onlyDirty && n.isDirty == 1)))
+        .length;
   }
 
   @override
   int getSimpleNotesCount(bool onlyDirty) {
-    return 1;
+    return notes
+        .where((Note n) =>
+            ((!onlyDirty || (onlyDirty && n.isDirty == 1)) && (n.form == null)))
+        .length;
   }
 
   @override
   int getFormNotesCount(bool onlyDirty) {
-    return 1;
+    return notes
+        .where((Note n) =>
+            ((!onlyDirty || (onlyDirty && n.isDirty == 1)) && (n.form != null)))
+        .length;
   }
 
   List<Note> getNotes({bool? doSimple, bool onlyDirty: false}) {
-    Note note = Note()
-      ..id = 1
-      ..lon = 135
-      ..lat = 35
-      ..altim = 0
-      ..timeStamp = 0
-      ..description = "Mock note description"
-      ..text = "Mock note text"
-      ..form = "Mock note form"
-      ..style = "Mock note style"
-      ..isDirty = 1;
-    return [note];
+    return notes
+        .where((Note n) => ((!onlyDirty || (onlyDirty && n.isDirty == 1)) &&
+            (doSimple == null ||
+                (doSimple && n.form == null) ||
+                (!doSimple && n.form != null))))
+        .toList();
   }
 
   Note getNoteById(int id) {
-    Note note = Note()
-      ..id = 1
-      ..lon = 135
-      ..lat = 35
-      ..altim = 0
-      ..timeStamp = 0
-      ..description = "Mock note description"
-      ..text = "Mock note text"
-      ..form = "Mock note form"
-      ..style = "Mock note style"
-      ..isDirty = 1;
-    return note;
+    return notes.firstWhere((Note n) => n.id == id);
   }
 
   @override
   int getImagesCount(bool onlyDirty) {
-    return 0;
+    return images
+        .where((DbImage i) => (!onlyDirty || (onlyDirty && i.isDirty == 1)))
+        .length;
   }
 
   @override
   List<DbImage> getImages({bool onlyDirty = false, bool onlySimple = true}) {
-    DbImage image = DbImage()
-      ..id = 1
-      ..lon = 135
-      ..lat = 35
-      ..altim = 0
-      // TODO:
-      ..timeStamp = 0
-      ..text = "Mock image text"
-      ..isDirty = 1;
-    return [image];
+    return images
+        .where((DbImage i) => ((!onlyDirty || (onlyDirty && i.isDirty == 1)) &&
+            (onlySimple != true || (onlySimple == true && i.noteId == null))))
+        .toList();
   }
 
   @override
   DbImage getImageById(int imageId) {
-    DbImage image = DbImage()
-      ..id = 1
-      ..lon = 135
-      ..lat = 35
-      ..altim = 0
-    // TODO:
-      ..timeStamp = 0
-      ..text = "Mock image text"
-      ..isDirty = 1;
-    return image;
+    return images.firstWhere((DbImage i) => i.id == imageId);
   }
 
   @override
@@ -140,17 +195,21 @@ class MockProjectDb implements ProjectDb {
 
   @override
   int getGpsLogCount(bool onlyDirty) {
-    return 0;
+    return logs
+        .where((Log l) => (!onlyDirty || (onlyDirty && l.isDirty == 1)))
+        .length;
   }
 
   @override
   List<Log> getLogs({bool onlyDirty: false}) {
-    return [];
+    return logs
+        .where((Log l) => (!onlyDirty || (onlyDirty && l.isDirty == 1)))
+        .toList();
   }
 
   @override
   Log? getLogById(int logId) {
-    return null;
+    return logs.firstWhere((Log l) => l.id == logId);
   }
 
   @override
