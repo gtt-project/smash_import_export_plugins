@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SMASH Import/Export Plugins Example',
-      //  locale: Locale('ja', 'JP'),
+      //locale: Locale('ja', 'JP'),
+      //locale: Locale('en', 'US'),
       localizationsDelegates: [
         IEL.delegate,
         GlobalMaterialLocalizations.delegate,

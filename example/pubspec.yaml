@@ -14,7 +14,10 @@ dependencies:
     path: ../
 
   smashlibs:
-    path: ../../smashlibs/
+    # path: ../smashlibs/
+    git:
+      url: https://github.com/moovida/smashlibs.git
+      ref: 9f248a1
 
   after_layout: ^1.0.7+2
 
